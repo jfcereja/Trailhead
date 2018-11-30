@@ -1,0 +1,32 @@
+<apex:page >
+  <apex:includeScript value="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.2.min.js"/>
+  <script>
+    jQuery(document).ready(function($) {
+      // Pull the limits from Rest API
+      $.ajax('/services/data/v34.0/limits',
+        {
+          beforeSend: function(xhr) {
+            // Set the OAuth header from the session ID
+            xhr.setRequestHeader('Authorization', 'Bearer {!$Api.Session_ID}');
+          },
+          success: function(response) {
+            // We got 'em - append our records to the HTML list
+            $.each(response, function(index, record) {
+              $('#limits').append('<li>'+index+': </li>');
+              $('#limits').append('<ul>Max: '+record.Max+'</ul>'+'<ul> Remaining: '+record.Remaining+'</ul>');
+              console.log(record.Max);
+            });
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            // Erro handler function
+            alert(jqXHR.status + ': ' + errorThrown);
+          }
+        }
+      );
+    });
+  </script>
+  <h1>Limites de Governança</h1>
+  <p>Limites:</p>
+  <ul id="limits">
+  </ul>
+</apex:page>
